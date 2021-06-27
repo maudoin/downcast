@@ -1,0 +1,35 @@
+IDI_ICON1 ICON DISCARDABLE "downcast.ico"
+IDI_APPLICATION    ICON    "downcast.ico"
+1 VERSIONINFO
+ FILEVERSION 1,0,0,0
+ PRODUCTVERSION 1,0,0,0
+ FILEFLAGSMASK 0x17L
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080904b0"
+        BEGIN
+            VALUE "Comments", "Non supported"
+            VALUE "CompanyName", "Immomedia"
+            VALUE "FileDescription", "Podcast downloader for MP4 player"
+            VALUE "FileVersion", "1, 0, 0, 0"
+            VALUE "InternalName", "Immomedia Castapod"
+            VALUE "LegalCopyright", "2023 M Audio In"
+            VALUE "OriginalFilename", "downcast.exe"
+            VALUE "ProductName", "Castapod"
+            VALUE "ProductVersion", "1, 0, 0, 0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x809, 1200
+    END
+END
