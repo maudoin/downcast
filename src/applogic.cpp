@@ -493,9 +493,11 @@ template <typename C>
 std::basic_string<C> ext(std::basic_string<C> const& path,
                          std::string const& defaultExt)
 {
-  auto start = path.find_last_of(".");
-  auto end = path.find_first_of("?", start);
-  return start==end ? defaultExt : path.substr(start, end);
+  static constexpr auto npos =std::basic_string<C>::npos;
+  auto startPos = path.find_last_of(".");
+  auto end = path.find_first_of("?", startPos);
+  auto endPos = end == npos ? path.size() : end ;
+  return (startPos == npos) ? defaultExt : path.substr(startPos, endPos-startPos);
 }
 template <typename C = std::filesystem::path::value_type>
 std::filesystem::path toPath( std::string const& s )
@@ -618,6 +620,11 @@ void AppLogic::startDownload()
               //output file and callbacks
               auto start = std::chrono::system_clock::now();
               auto out = std::make_unique<std::ofstream>(tempPath, std::ios_base::trunc|std::ios_base::binary|std::ios_base::out);
+              if(!out)
+              {
+                setLastError("Cannot open target file " + tempPath.string());
+                continue;
+              }
               auto const receiver = [&](const char *data, size_t data_length)
               {
                 out->write(data, data_length);
