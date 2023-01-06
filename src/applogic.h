@@ -81,6 +81,10 @@ public:
   bool insertPodcast(PodcastCols const& podcast, InsertPodcastMode mode);
 
   std::string const* lastError()const;
+
+  static std::string computeBaseFilename(const char* pattern,
+                                         std::string const& title,
+                                         int const publicationDate);
 private:
   void resetLastError();
   void setLastError(std::string const& msg);

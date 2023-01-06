@@ -34,3 +34,5 @@ target_link_libraries(${PROJECT_NAME}
 add_subdirectory(googletest-release-1.12.1)
 enable_testing()
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+
+add_subdirectory(fmt-9.1.0)

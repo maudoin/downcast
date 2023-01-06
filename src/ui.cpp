@@ -382,6 +382,8 @@ void displayAddPodcastWindow(AppLogic& app, bool& showAddPodcast,
   static char url[urlMaxSize];
   static constexpr int nameMaxSize=1024;
   static char name[nameMaxSize];
+  static constexpr int patternMaxSize=1024;
+  static char pattern[patternMaxSize];
   static constexpr int pathMaxSize=1024;
   static char path[pathMaxSize];
   //read only info:
@@ -508,6 +510,42 @@ void displayAddPodcastWindow(AppLogic& app, bool& showAddPodcast,
       {
         ImGui::SetNextItemWidth(-FLT_MIN);
         ImGui::InputText("##name", name, nameMaxSize);
+      }
+      ImGui::NextColumn();
+    }
+    ImGui::TableNextRow();
+    {
+      ImGui::TableSetColumnIndex(0);
+      {
+        ImGui::AlignTextToFramePadding();
+        ImGui::Text("Filenames");
+      }
+      ImGui::TableSetColumnIndex(1);
+      {
+        ImGui::SetNextItemWidth(-75);
+        ImGui::InputText("##pattern", pattern, patternMaxSize);
+        if (ImGui::IsItemHovered())
+        {
+          std::string patternPreview =
+              app.computeBaseFilename(pattern, "Show sample title",
+                                      std::chrono::duration_cast<std::chrono::seconds>(
+                                        std::chrono::system_clock::now()
+                                        - std::chrono::system_clock::time_point{}).count());
+
+          ImGui::BeginTooltip();
+          ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+          ImGui::TextDisabled("%s", "preview: ");
+          ImGui::SameLine();
+          ImGui::TextUnformatted(patternPreview.c_str());
+          ImGui::TextDisabled("available variables: %s", "{date}, {title}\nexample: {date}-ThePodcast-{title}");
+          ImGui::PopTextWrapPos();
+          ImGui::EndTooltip();
+        }
+        ImGui::SameLine();
+        if(ImGui::Button("Default"))
+        {
+          strcpy(pattern, "{date}-{title}");
+        }
       }
       ImGui::NextColumn();
     }

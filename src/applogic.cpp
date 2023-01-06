@@ -7,6 +7,7 @@
 #include <fstream>
 #include <iostream>
 #include <assert.h>
+#include <fmt/format.h>
 
 AppLogic::AppLogic(std::string const& dbPath)
   : m_dbPath(dbPath)
@@ -511,12 +512,16 @@ std::filesystem::path toPath( std::string const& s )
     return {s};
   }
 }
-std::string computeFilename(MediaCols const& show)
+inline auto to_time_t(int const publicationDate)
 {
   const auto t =
       std::chrono::time_point<std::chrono::system_clock>{} +
-      std::chrono::seconds(show.publicationDate);
-  auto in_time_t = std::chrono::system_clock::to_time_t(t);
+      std::chrono::seconds(publicationDate);
+  return std::chrono::system_clock::to_time_t(t);
+}
+std::string computeFilename(MediaCols const& show)
+{
+  auto in_time_t = to_time_t(show.publicationDate);
   std::ostringstream nameOss;
   nameOss << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d-")
        << cleanupFilenameCharacters(show.title) << ext(show.url, ".mp3");
@@ -531,6 +536,31 @@ void backupOrRemove(std::filesystem::path const& path, std::filesystem::path con
     std::filesystem::remove(path, ec);
   }
 }
+}
+//-----------------------------------------------------------------------------------
+std::string AppLogic::computeBaseFilename(const char* pattern,
+                                          std::string const& title,
+                                          int const publicationDate)
+{
+
+  auto in_time_t = to_time_t(publicationDate);
+  std::ostringstream dateOss;
+  dateOss << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d");
+  try
+  {
+    if(strlen(pattern))
+    {
+      return cleanupFilenameCharacters(
+            fmt::format(fmt::runtime(pattern),
+                        fmt::arg("date", dateOss.str()),
+                        fmt::arg("title", title)));
+    }
+  }
+  catch (...)
+  {
+  }
+  dateOss<<"-"<<cleanupFilenameCharacters(title);
+  return dateOss.str();
 }
 //-----------------------------------------------------------------------------------
 std::vector<PodcastCols> AppLogic::retrieveCurrentPodcastsCopy()const

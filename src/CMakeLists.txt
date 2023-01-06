@@ -27,6 +27,7 @@ target_link_libraries (${PROJECT_NAME}
     PRIVATE
       3rdparties
       stdc++fs
+      fmt::fmt-header-only
 )
 
 add_custom_target(
