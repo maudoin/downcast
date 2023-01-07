@@ -317,8 +317,9 @@ Storage::Result Storage::initDefaultContent(const std::string &dbPath)
     {
       return res;
     }
-    res = engine.createTable<MediaCols>(/*std::string(" FOREIGN KEY (podcast_id) REFERENCES ")+
-                                                                       SQLiteTable<PodcastCols>()+"(id)"*/);
+    res = engine.createTable<MediaCols>(
+            std::string(" FOREIGN KEY (podcast_id) REFERENCES ")
+            + SQLiteTable<PodcastCols>()+"(id)");
     if(!res)
     {
       return res;
@@ -374,8 +375,9 @@ void Storage::convertCastapodStorage(const std::string &srcPath,
     if(target)
     {
       target.createTable<PodcastCols>();
-      target.createTable<MediaCols>(/*std::string(" FOREIGN KEY (podcast_id) REFERENCES ")+
-                                                                                                     SQLiteTable<PodcastCols>()+"(id)"*/);
+      target.createTable<MediaCols>(
+            std::string(" FOREIGN KEY (podcast_id) REFERENCES ")
+            + SQLiteTable<PodcastCols>()+"(id)");
 
       {
         SqlInserter<PodcastCols> inserter = target.buildInserter<PodcastCols>(SqlInserterMode::UPDATE);

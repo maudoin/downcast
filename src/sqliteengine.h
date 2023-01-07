@@ -93,6 +93,8 @@ public:
   operator bool() const;
 protected:
 
+  Result execSql(std::ostringstream const& oss) const;
+
   std::string m_dbPath;
   sqlite3 *m_db = nullptr;
   bool m_opened = false;
@@ -202,6 +204,11 @@ public:
         std::string const&table,
         SqlCol<SelV> const&selectCol,
         std::vector<SelV>const& selectValues);
+
+  Result dropTable(std::string const&tableName);
+  Result renameTable(std::string const&tableName,std::string const&tableNewName);
+  Result copyRows(std::string const&tableSrc,std::string const&tableDest,
+                  std::vector<std::string> columns);
 protected:
 
   SQLiteStorageModificationEngine(std::string const& dbPath,

@@ -43,6 +43,15 @@ SQLiteStorageEngineBase::operator bool() const
   return m_opened;
 }
 //-----------------------------------------------------------------------------------
+SQLiteStorageEngineBase::Result
+SQLiteStorageEngineBase::execSql(std::ostringstream const& oss) const
+{
+  std::string const query=oss.str();
+  char* errorMessage;
+  auto rc = sqlite3_exec(m_db, query.c_str(), NULL, NULL, &errorMessage);
+  return (rc==SQLITE_OK)?Result{}:Result{{errorMessage}};
+}
+//-----------------------------------------------------------------------------------
 
 SQLiteStorageViewEngine::SQLiteStorageViewEngine(std::string const& dbPath,
                                                  Mode mode)
@@ -91,6 +100,38 @@ SQLiteStorageModificationEngine(std::string const& dbPath)
 {
 }
 
+//-----------------------------------------------------------------------------------
+SQLiteStorageModificationEngine::Result
+SQLiteStorageModificationEngine::renameTable(std::string const&tableName,
+                                             std::string const&tableNewName)
+{
+
+  std::ostringstream oss;
+  oss<<"ALTER TABLE "<<tableName
+     << " RENAME TO "<<tableNewName;
+  return execSql(oss);
+}
+//-----------------------------------------------------------------------------------
+SQLiteStorageModificationEngine::Result
+SQLiteStorageModificationEngine::dropTable(std::string const&tableName)
+{
+
+  std::ostringstream oss;
+  oss<<"DROP TABLE "<<tableName;
+  return execSql(oss);
+}
+//-----------------------------------------------------------------------------------
+SQLiteStorageModificationEngine::Result
+SQLiteStorageModificationEngine::copyRows(std::string const&tableSrc,
+                                          std::string const&tableDest,
+                                          std::vector<std::string> columns)
+{
+  std::ostringstream oss;
+  oss<<"INSERT INTO "<<tableDest
+     << " SELECT "<< (columns.empty()?"*":join(columns))
+     << " FROM "<<tableSrc;
+  return execSql(oss);
+}
 //-----------------------------------------------------------------------------------
 SQLiteStorageCreationEngine::SQLiteStorageCreationEngine(std::string const& dbPath)
   : SQLiteStorageModificationEngine(dbPath, Mode::ReadWriteCreate)

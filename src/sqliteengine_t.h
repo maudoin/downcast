@@ -67,9 +67,9 @@ SqlInserter<T>::SqlInserter(sqlite3 *db, Mode mode)
   :m_mode(mode)
   ,m_db(db)
 {
-  std::ostringstream oss;
   char* errorMessage;
   sqlite3_exec(m_db, "BEGIN TRANSACTION", NULL, NULL, &errorMessage);
+  std::ostringstream oss;
   oss << "INSERT";
   switch(mode)
   {
@@ -165,7 +165,7 @@ void SqlInserter<T>::insert(T const& entry)
 
 //-----------------------------------------------------------------------------------
 template <typename T>
-SqlInserter<T>::Result SqlInserter<T>::exec()
+typename SqlInserter<T>::Result SqlInserter<T>::exec()
 {
   char* errorMessage;
   int rc = sqlite3_exec(m_db, "END TRANSACTION", NULL, NULL, &errorMessage);
@@ -391,10 +391,7 @@ SQLiteStorageModificationEngine::deleteRecords(
     oss << ", "<< *it;
   }
   oss << ")";
-  std::string const query=oss.str();
-  char* errorMessage;
-  auto rc = sqlite3_exec(m_db, query.c_str(), NULL, NULL, &errorMessage);
-  return (rc==SQLITE_OK)?Result{}:Result{{errorMessage}};
+  return execSql(oss);
 }
 //-----------------------------------------------------------------------------------
 template <typename T>
@@ -432,7 +429,12 @@ SQLiteStorageCreationEngine::createTable(std::string const& additional)
     hasprevious = true;
   });
 
-  oss <<" )" << additional;
+  if(!additional.empty())
+  {
+    oss << ", " << additional;
+  }
+
+  oss <<" )";
 
   sqlite3_stmt*        stmt;
   std::string query=oss.str();
