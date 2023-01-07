@@ -22,7 +22,6 @@ struct MediaViewCols
   std::string title;
   std::string url;
   std::string summary;
-  Blob image_blob;
   int date;
   int duration;
   std::string dateStr()const;
@@ -37,7 +36,6 @@ struct MediaCols
   std::string url;
   std::string summary;
   std::string image_url;
-  Blob image_blob;
   int publicationDate;
   int duration;
   int status;
@@ -90,9 +88,6 @@ public:
 
   static Result initDefaultContent(std::string const& dbPath);
 
-  static void convertCastapodStorage(const std::string &srcPath,
-                                     const std::string &tgtPath);
-
   template <typename T>
   SqlInserter<T> buildInserter(SqlInserterMode mode);
 private:
@@ -103,3 +98,8 @@ private:
   std::optional<Filter> m_statusFilter = std::nullopt;
   SQLiteStorageModificationEngine m_engine;
 };
+
+
+void convertCastapodStorage(const std::string &srcPath,
+                            const std::string &tgtPath);
+void upgradeTable(const std::string &dbPath);

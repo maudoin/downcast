@@ -347,11 +347,7 @@ void showTable(AppLogic& app)
           ImGui::TextDisabled("...");
           if (ImGui::IsItemHovered())
           {
-            static TextureInfo tex;
-            static Blob lastImg;
-            tex.loadIfChanged(show.image_blob, lastImg);
             ImGui::BeginTooltip();
-            tex.showTooltip();
             ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
             ImGui::TextUnformatted(show.summary.c_str());
             ImGui::PopTextWrapPos();

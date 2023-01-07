@@ -115,7 +115,6 @@ static const SqlText title{"title"} ;
 static const SqlText link{"link", SqlColKind::UNIQUE} ;
 static const SqlText summary{"summary"} ;
 static const SqlText image_url{"image_url"} ;
-static const SqlBlob image_blob{"image_blob"} ;
 static const SqlInteger publicationDate{"publicationDate"} ;
 static const SqlInteger duration{"duration"} ;
 static const SqlInteger status{"status"};
@@ -131,7 +130,6 @@ auto SQLiteColumns<MediaCols>(){return std::make_tuple(
         map(SQLMediaCols::link, &MediaCols::url),
         map(SQLMediaCols::summary, &MediaCols::summary),
         map(SQLMediaCols::image_url, &MediaCols::image_url),
-        map(SQLMediaCols::image_blob, &MediaCols::image_blob),
         map(SQLMediaCols::publicationDate, &MediaCols::publicationDate),
         map(SQLMediaCols::duration, &MediaCols::duration),
         map(SQLMediaCols::status, &MediaCols::status));}
@@ -144,7 +142,6 @@ auto SQLiteColumns<MediaViewCols>(){return std::make_tuple(
         map(SQLMediaCols::title, &MediaViewCols::title),
         map(SQLMediaCols::link, &MediaViewCols::url),
         map(SQLMediaCols::summary, &MediaViewCols::summary),
-        map(SQLMediaCols::image_blob, &MediaViewCols::image_blob),
         map(SQLMediaCols::publicationDate, &MediaViewCols::date),
         map(SQLMediaCols::duration, &MediaViewCols::duration));}
 //-----------------------------------------------------------------------------------
@@ -345,7 +342,6 @@ struct CastapodMediaCols
   std::string url;
   std::string summary;
   std::string image_url;
-  Blob image_blob;
   int publicationDate;
   std::string duration;
   int status;
@@ -360,13 +356,12 @@ auto SQLiteColumns<CastapodMediaCols>(){return std::make_tuple(
         map(SQLMediaCols::link, &CastapodMediaCols::url),
         map(SQLMediaCols::summary, &CastapodMediaCols::summary),
         map(SQLMediaCols::image_url, &CastapodMediaCols::image_url),
-        map(SQLMediaCols::image_blob, &CastapodMediaCols::image_blob),
         map(SQLMediaCols::publicationDate, &CastapodMediaCols::publicationDate),
         map(SqlText{"duration"}, &CastapodMediaCols::duration),
         map(SQLMediaCols::status, &CastapodMediaCols::status));}
 //-----------------------------------------------------------------------------------
-void Storage::convertCastapodStorage(const std::string &srcPath,
-                                                 const std::string &tgtPath)
+void convertCastapodStorage(const std::string &srcPath,
+                            const std::string &tgtPath)
 {
   SQLiteStorageViewEngine source(srcPath);
   if(source)
@@ -395,7 +390,6 @@ void Storage::convertCastapodStorage(const std::string &srcPath,
           converted.url             = p.url             ;
           converted.summary         = p.summary         ;
           converted.image_url       = p.image_url       ;
-          converted.image_blob      = p.image_blob      ;
           converted.publicationDate = p.publicationDate ;
           converted.duration        = durationFromRSS(p.duration.c_str());
           converted.status          = p.status          ;
