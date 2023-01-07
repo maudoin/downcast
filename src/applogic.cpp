@@ -519,14 +519,6 @@ inline auto to_time_t(int const publicationDate)
       std::chrono::seconds(publicationDate);
   return std::chrono::system_clock::to_time_t(t);
 }
-std::string computeFilename(MediaCols const& show)
-{
-  auto in_time_t = to_time_t(show.publicationDate);
-  std::ostringstream nameOss;
-  nameOss << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d-")
-       << cleanupFilenameCharacters(show.title) << ext(show.url, ".mp3");
-  return nameOss.str();
-}
 void backupOrRemove(std::filesystem::path const& path, std::filesystem::path const& pathBackup)
 {
   std::error_code ec;
@@ -636,7 +628,9 @@ void AppLogic::startDownload()
             try
             {
               //output file path
-              std::string filenameRaw = computeFilename(show);
+              std::string filenameRaw = computeBaseFilename(podcast.pattern.c_str(),
+                                                            show.title, show.publicationDate)
+                                        + ext(show.url, ".mp3");
               std::filesystem::path tempPath=targetFolder
                                              / toPath<>(filenameRaw+".running");
 

@@ -73,6 +73,7 @@ static const char* table = "podcast";
 
 static const SqlInteger id{"id", SqlColKind::AUTO_PRIMARY_KEY};
 static const SqlText title{"title"};
+static const SqlText pattern{"pattern"};
 static const SqlText link{"link", SqlColKind::UNIQUE};
 static const SqlText summary{"summary"};
 static const SqlText image_url{"image_url"};
@@ -87,6 +88,7 @@ template<>
 auto SQLiteColumns<PodcastCols>(){return std::make_tuple(
         map(SQLPodcastCols::id, &PodcastCols::id),
         map(SQLPodcastCols::title, &PodcastCols::title),
+        map(SQLPodcastCols::pattern, &PodcastCols::pattern),
         map(SQLPodcastCols::link, &PodcastCols::link),
         map(SQLPodcastCols::summary, &PodcastCols::summary),
         map(SQLPodcastCols::image_url, &PodcastCols::image_url),

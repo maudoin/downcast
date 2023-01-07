@@ -10,6 +10,7 @@ struct PodcastCols
 {
   int id;
   std::string title;
+  std::string pattern;
   std::string link;
   std::string summary;
   std::string image_url;

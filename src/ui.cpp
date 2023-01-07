@@ -415,6 +415,7 @@ void displayAddPodcastWindow(AppLogic& app, bool& showAddPodcast,
         updatePodcastId = toUpdate->id;
         strcpy(url, toUpdate->link.c_str());
         strcpy(name, toUpdate->title.c_str());
+        strcpy(pattern, toUpdate->pattern.c_str());
         strcpy(path, toUpdate->target.c_str());
         description = toUpdate->summary;
         imageUrl.clear();
@@ -582,6 +583,7 @@ void displayAddPodcastWindow(AppLogic& app, bool& showAddPodcast,
     podcast.id = updatePodcastId?*updatePodcastId:0;
     podcast.link = url;
     podcast.title = name;
+    podcast.pattern = pattern;
     podcast.target = path;
     podcast.summary = description;
     podcast.image_url = imageUrl;
