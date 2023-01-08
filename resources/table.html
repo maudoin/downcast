@@ -33,7 +33,80 @@
     color: #444;
     border-right: 1px solid black;
   }
+  .resizer {
+    /* Displayed at the right side of column */
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 5px;
+    cursor: col-resize;
+    user-select: none;
+  }
+  .resizer:hover,
+  .resizing {
+    border-right: 2px solid blue;
+  }
 </style>
+
+<script type="text/javascript" charset="utf-8">
+const createResizableColumn = function (table, col, resizer) {
+	this.table = table;
+    // Track the current position of mouse
+    let x = 0;
+    let w = 0;
+
+    const mouseDownHandler = function (e) {
+        // Get the current mouse position
+        x = e.clientX;
+
+        // Calculate the current width of column
+        const styles = window.getComputedStyle(col);
+        w = parseInt(styles.width, 10);
+
+        // Attach listeners for document's events
+        document.addEventListener('mousemove', mouseMoveHandler);
+        document.addEventListener('mouseup', mouseUpHandler);
+    };
+
+    const mouseMoveHandler = function (e) {
+        // Determine how far the mouse has been moved
+        const dx = e.clientX - x;
+
+        // Update the width of column
+        col.style.width = `${w + dx}px`;
+
+        const cols = table.querySelectorAll("."+col.className);
+		// Loop over them
+		[].forEach.call(cols, function (col) {
+          col.style.width = `${w + dx}px`;
+		});
+    };
+
+    // When user releases the mouse, remove the existing event listeners
+    const mouseUpHandler = function () {
+        document.removeEventListener('mousemove', mouseMoveHandler);
+        document.removeEventListener('mouseup', mouseUpHandler);
+    };
+
+    resizer.addEventListener('mousedown', mouseDownHandler);
+};
+const appendResizer = function (table, cell) {
+
+    // Create a resizer element
+    const resizer = document.createElement('div');
+    resizer.classList.add('resizer');
+
+    // Set the height
+    resizer.style.height = `${table.offsetHeight}px`;
+
+    // Add a resizer element to the column
+    cell.appendChild(resizer);
+
+    // Will be implemented in the next section
+    createResizableColumn(table, cell, resizer);
+};
+</script>
+
 <script type="text/javascript" charset="utf-8">
   window.ui = window.ui || {};
 
@@ -177,6 +250,12 @@
 	  }
 	};
     var table = document.getElementById('table');
+    var header = document.getElementById('header');
+    const cols = header.querySelectorAll('div');
+	// Loop over them
+	[].forEach.call(cols, function (col) {
+        appendResizer(table, col);
+	});
     var listView = new ui.ListView(table, list);
   }
 </script>
