@@ -83,8 +83,8 @@ function(code_sign_target_files PACK_TGT_NAME)
     if(DEFINED ENV{SIGN_PASSWORD})
         ADD_CUSTOM_COMMAND(
           DEPENDS ${PACK_TGT_NAME}
-          COMMAND ${SIGNTOOL}
-          ARGS sign /f ${SIGN_CERT_FILE} /p $ENV{SIGN_PASSWORD} /fd sha256 /tr http://timestamp.digicert.com /td sha256 /v $<TARGET_FILE:${PACK_TGT_NAME}>
+          COMMAND $<IF:$<CONFIG:Release>,${SIGNTOOL},echo>
+          ARGS $<$<CONFIG:Debug>:"Skipping signing"> sign /f ${SIGN_CERT_FILE} /p $ENV{SIGN_PASSWORD} /fd sha256 /tr http://timestamp.digicert.com /td sha256 /v $<TARGET_FILE:${PACK_TGT_NAME}>
           TARGET ${PACK_TGT_NAME})
     else()
         message("define SIGN_PASSWORD env variable to sign the executable")

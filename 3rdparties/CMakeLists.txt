@@ -18,6 +18,7 @@ target_include_directories(${PROJECT_NAME}
     PUBLIC
     .
     rapidxml-1.13
+    libhv-1.3.0/include
 )
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
@@ -36,3 +37,5 @@ enable_testing()
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 add_subdirectory(fmt-9.1.0)
+
+add_subdirectory(libhv-1.3.0)

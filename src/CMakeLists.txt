@@ -5,6 +5,8 @@ add_executable(${PROJECT_NAME}
     main.cpp
     ui.h
     ui.cpp
+    webui.h
+    webui.cpp
     MutexedData.h
     SharedMutexedData.h
     storage.h
@@ -28,6 +30,7 @@ target_link_libraries (${PROJECT_NAME}
       3rdparties
       stdc++fs
       fmt::fmt-header-only
+      hv_static#${HV_LIBRARIES}
 )
 
 add_custom_target(

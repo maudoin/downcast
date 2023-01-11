@@ -895,14 +895,20 @@ void frame(AppLogic& app)
   }
 }
 
+std::shared_ptr<AppLogic>& app()
+{
+  static std::shared_ptr<AppLogic> app;
+  return app;
+}
 void frame()
 {
-  static AppLogic app("castapod.db3");
-  frame(app);
+  frame(*app());
 }
 }
-void runUI()
+void runUI(std::shared_ptr<AppLogic> const& applogic)
 {
+  app() = applogic;
+
   njInit();
 
   // when ready start the UI (this will not return until the app finishes)
