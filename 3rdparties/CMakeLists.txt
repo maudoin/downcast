@@ -39,3 +39,8 @@ include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 add_subdirectory(fmt-9.1.0)
 
 add_subdirectory(libhv-1.3.0)
+
+add_subdirectory(cppack-51655ec)
+
+set(MSGPACK_JS_FOLDER ${PROJECT_SOURCE_DIR}/msgpack.js-1.0.3 PARENT_SCOPE)
+

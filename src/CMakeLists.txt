@@ -30,7 +30,8 @@ target_link_libraries (${PROJECT_NAME}
       3rdparties
       stdc++fs
       fmt::fmt-header-only
-      hv_static#${HV_LIBRARIES}
+      hv_static
+      Msgpack::Msgpack
 )
 
 add_custom_target(
@@ -42,3 +43,8 @@ add_custom_target(
 code_sign_target_files(${PROJECT_NAME})
 
 pack_target(${PROJECT_NAME} )
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+  configure_file(resources/index.html ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+  configure_file(${MSGPACK_JS_FOLDER}/msgpack.js ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+endif()

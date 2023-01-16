@@ -1,15 +1,52 @@
 #include "webui.h"
+#include "applogic.h"
 
 #include "hv/WebSocketServer.h"
 #include "hv/EventLoop.h"
 #include "hv/htime.h"
 #include "hv/hssl.h"
+#include "msgpack/msgpack.hpp"
 
 #define TEST_WSS 0
 
 using namespace hv;
 
+struct TableRangeRequest {
+  uint16_t begin, size;
 
+  template<class T>
+  void msgpack(T &pack) {
+    pack(begin, size);
+  }
+};
+
+struct PackableMediaViewCols {
+  MediaViewCols const& _show;
+  template<class T>
+  void msgpack(T &pack) {
+    pack(_show.id, _show.title, _show.url, _show.summary, _show.dateStr(), _show.durationStr());
+  }
+};
+
+struct TableRangeResponse {
+  TableRangeResponse(AppLogic& app, TableRangeRequest const params)
+    : _shows(app.showsInRankRange(params.begin, params.size))
+  {
+    _packableShows.reserve(_shows.size());
+    for(auto const& show:_shows)
+    {
+      _packableShows.emplace_back(show);
+    }
+
+  }
+  template<class T>
+  void msgpack(T &pack)
+  {
+    pack(_packableShows);
+  }
+  std::vector<MediaViewCols> _shows;
+  std::vector<PackableMediaViewCols> _packableShows;
+};
 class MyContext {
 public:
     MyContext() {
@@ -29,6 +66,8 @@ public:
 
     TimerID timerID;
 };
+const char* msgpack_min_js = R"foo(
+)foo";
 const char* page = R"foo(
 <!DOCTYPE html>
 <html lang = "en">
@@ -142,10 +181,21 @@ const char* page = R"foo(
 
 WebUi::WebUi(std::shared_ptr<AppLogic> const& applogic, int port)
 {
-
+#ifdef NDEBUG
     _http.GET("/", [](const HttpContextPtr& ctx) {
         return ctx->send(page, TEXT_HTML);
     });
+    _http.GET("/msgpack.min.js", [](const HttpContextPtr& ctx) {
+        return ctx->send(msgpack_min_js, APPLICATION_JAVASCRIPT);
+    });
+#else
+   _http.GET("/", [](const HttpContextPtr& ctx) {
+       return ctx->sendFile("index.html");
+   });
+   _http.GET("/msgpack.min.js", [](const HttpContextPtr& ctx) {
+       return ctx->sendFile("msgpack.js");
+   });
+#endif
 
     _ws.onopen = [](const WebSocketChannelPtr& channel, const HttpRequestPtr& req) {
         printf("onopen: GET %s\n", req->Path().c_str());
