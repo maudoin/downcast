@@ -7,6 +7,7 @@
 
 #include <type_traits>
 #include <vector>
+#include <regex>
 #include <sstream>
 #include <optional>
 #include <string>
@@ -16,8 +17,10 @@
 #include <chrono>
 #include <iomanip>
 #include <stdio.h>
-#include <sys/time.h>
 #include <time.h>
+#ifdef __GNUC__
+#include <sys/time.h>
+#endif
 
 namespace  {
 inline char* strptime(const char* s,
@@ -86,6 +89,11 @@ void rssparser(std::string const& data,
   {
     return node?node->value():nullptr;
   };
+  auto escapedNodeValue=[](xml_base<>* node)
+  {
+	  static std::regex tag("(<[^\\<]*>)|(\\&)(lt|gt|nbsp|amp|apos)");
+    return node?std::regex_replace(node->value(),tag,""):nullptr;
+  };
   static auto innerNodeIfEmptyValue = [](xml_node<>* node)
   {
     return node?(node->value_size()?node:node->first_node()):nullptr;
@@ -133,7 +141,7 @@ void rssparser(std::string const& data,
           xml_base<>* itemThumbnailUrl = itemThumbnail?attributeOrContent(itemThumbnail,"url"):nullptr;
 
           itemCallback(nodeValue(itemTitle),
-                       nodeValue(itemDesc),
+                       escapedNodeValue(itemDesc).c_str(),
                        nodeValue(itemEnclosureUrl),
                        pubDate?dateFromRSS(pubDate->value()):0,
                        itemDuration?durationFromRSS(itemDuration->value()):0,

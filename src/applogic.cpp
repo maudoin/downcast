@@ -2,6 +2,7 @@
 
 #include "httpengine.h"
 
+#include <codecvt>
 #include <thread>
 #include <filesystem>
 #include <fstream>

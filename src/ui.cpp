@@ -17,9 +17,15 @@
 #include <chrono>
 #include <iomanip>
 #include <cstdio>
+#include <time.h>
+#ifdef __GNUC__
 #include <sys/time.h>
+#endif
 #include <ctime>
 #include <cmath>
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 int decodePNG(std::vector<unsigned char>& out_image, unsigned long& image_width, unsigned long& image_height, const unsigned char* in_png, size_t in_size, bool convert_to_rgba32 = true);
 

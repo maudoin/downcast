@@ -3,6 +3,8 @@
 #define CPPHTTPLIB_OPENSSL_SUPPORT
 #include "httplib.h"//under windows, before windows.h
 
+#include <numeric>
+
 //-----------------------------------------------------------------------------------
 namespace
 {

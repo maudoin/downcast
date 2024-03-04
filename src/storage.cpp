@@ -5,7 +5,9 @@
 
 #include <chrono>
 #include <time.h>
+#ifdef __GNUC__
 #include <sys/time.h>
+#endif
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
